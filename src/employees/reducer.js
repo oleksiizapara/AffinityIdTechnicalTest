@@ -10,6 +10,7 @@ import { sortDirections } from './constants';
 
 export const selectors = {
   employees: state => state[key].employees,
+  employeesGroups: state => state[key].employeesGroups,
   selectedEmployee: state => state[key].selectedEmployee,
   selectedEmployeeStatus: state => state[key].selectedEmployeeStatus,
   teams: state => state[key].teams,
