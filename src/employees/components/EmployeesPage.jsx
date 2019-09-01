@@ -11,6 +11,7 @@ import logo from 'logo.png';
 import styled from 'styled-components';
 import EmployeeCreateOrUpdate from './EmployeeCreateOrUpdate';
 import Layout from '../../layout/components/Layout';
+import EmployeeDetails from './EmployeeDetails';
 
 const Logo = styled.div`
   background-image: url(${logo});
@@ -50,7 +51,11 @@ const EmployeePage = () => {
               lg={6}
               style={{ marginTop: 10, marginBottom: 10 }}
             >
-              <Button block variant='dark'>
+              <Button
+                block
+                variant='dark'
+                style={{ backgroundColor: '#000000' }}
+              >
                 CREATE A NEW EMPLOYEE
               </Button>
             </Col>
@@ -68,6 +73,7 @@ const EmployeePage = () => {
               <EmployeeList />
             </Col>
             <Col xs={12} sm={6} lg={6}>
+              {/* <EmployeeDetails /> */}
               <EmployeeCreateOrUpdate />
             </Col>
           </Row>

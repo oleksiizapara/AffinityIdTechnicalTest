@@ -5,6 +5,7 @@ import App, { MockedApp } from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 if (
   process.env.NODE_ENV === 'development' &&

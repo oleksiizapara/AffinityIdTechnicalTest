@@ -88,7 +88,23 @@ export const defaultMock = {
       team: 'Finance & Admin'
     }
   ],
-  selectedEmployee: null,
+  selectedEmployee: {
+    id: 1,
+    firstName: 'Jack',
+    familyName: 'Jackson',
+    roleId: 1,
+    teamId: 2,
+    imageId: 1,
+    email: 'jjackson@affinityid.co.nz',
+    city: 'Auckland',
+    address: '21 college hill',
+    createdAt: 1567150697936,
+    updatedAt: 1567150697936,
+    iconSrc:
+      'https://github.com/oleksiizapara/AffinityIdTechnicalTestApi/raw/master/J_Jackson.jpg',
+    role: 'Admin',
+    team: 'Creative'
+  },
   selectedEmployeeStatus: 'DEFAULT_STATE',
   teams: [
     { id: 1, name: 'Finance & Admin' },

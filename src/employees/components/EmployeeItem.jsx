@@ -1,11 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import Card from 'layout/components/Card';
+import { Image } from 'react-bootstrap';
 
-const IconImage = styled.img`
-  width: 60px;
-  height: 60px;
-`;
+import Card from 'layout/components/Card';
 
 const FullName = styled.div`
   line-height: 18px;
@@ -38,7 +35,7 @@ const EmployeeItem = ({ employee }) => {
 
   return (
     <Card>
-      <IconImage src={iconSrc} />
+      <Image src={iconSrc} roundedCircle style={{ width: 60, height: 60 }} />
       <Body>
         <FullName>
           {firstName} {familyName}

@@ -2,8 +2,6 @@ import React from 'react';
 import { Form, Button, Col, InputGroup } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { errorMessages } from 'employees/errorMessages';
 import FormLayout from '../../layout/components/FormLayout';
@@ -48,14 +46,12 @@ const EmployeeCreate = () => {
   return (
     <>
       <FormLayout>
-        <FontAwesomeIcon
-          icon={faTimesCircle}
-          size='2x'
+        <i
+          className='fa fa-times-circle fa-2x'
           style={{
-            float: 'right',
             position: 'absolute',
-            top: -'10',
-            right: '10',
+            top: -10,
+            right: 10,
             cursor: 'pointer'
           }}
         />
