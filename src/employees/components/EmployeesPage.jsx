@@ -1,12 +1,25 @@
 import React, { useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 
-import Layout from './Layout';
 import EmployeeSelected from './EmployeeSelected';
 import EmployeeList from './EmployeeList';
 import { useDispatch } from 'react-redux';
 import useReactRouter from 'use-react-router';
 import { actions } from 'employees/actions';
+import logo from 'logo.png';
+
+import styled from 'styled-components';
+import EmployeeCreateOrUpdate from './EmployeeCreateOrUpdate';
+import Layout from '../../layout/components/Layout';
+
+const Logo = styled.div`
+  background-image: url(${logo});
+  height: 38px;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+`;
 
 const EmployeePage = () => {
   const dispatch = useDispatch();
@@ -18,16 +31,48 @@ const EmployeePage = () => {
 
   return (
     <Layout>
-      <Container>
-        <Row>
-          <Col xs={12} sm={6} lg={6}>
-            <EmployeeList />
-          </Col>
-          <Col xs={12} sm={6} lg={6}>
-            <EmployeeSelected />
-          </Col>
-        </Row>
-      </Container>
+      <div
+        style={{ backgroundColor: '#fafafa', width: '100%', height: '100%' }}
+      >
+        <Container>
+          <Row>
+            <Col
+              xs={12}
+              sm={6}
+              lg={6}
+              style={{ marginTop: 10, marginBottom: 10 }}
+            >
+              <Logo />
+            </Col>
+            <Col
+              xs={12}
+              sm={6}
+              lg={6}
+              style={{ marginTop: 10, marginBottom: 10 }}
+            >
+              <Button block variant='dark'>
+                CREATE A NEW EMPLOYEE
+              </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} sm={6} lg={6}>
+              <div style={{ padding: 10 }}>
+                <Form.Control type='text' placeholder='Search:' />
+              </div>
+            </Col>
+            <Col xs={12} sm={6} lg={6}></Col>
+          </Row>
+          <Row>
+            <Col xs={12} sm={6} lg={6}>
+              <EmployeeList />
+            </Col>
+            <Col xs={12} sm={6} lg={6}>
+              <EmployeeCreateOrUpdate />
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </Layout>
   );
 };

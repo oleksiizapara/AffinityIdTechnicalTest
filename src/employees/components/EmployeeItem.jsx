@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Card from 'layout/components/Card';
 
 const IconImage = styled.img`
   width: 60px;
@@ -32,19 +33,11 @@ const Body = styled.div`
   align-self: center;
 `;
 
-const Item = styled.div`
-  padding: 10px 20px 10px 20px;
-  margin: 10px;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: start;
-`;
-
 const EmployeeItem = ({ employee }) => {
   const { firstName, familyName, role, team, iconSrc } = employee;
 
   return (
-    <Item>
+    <Card>
       <IconImage src={iconSrc} />
       <Body>
         <FullName>
@@ -53,7 +46,7 @@ const EmployeeItem = ({ employee }) => {
         <Role>{role}</Role>
         <Teams>{team}</Teams>
       </Body>
-    </Item>
+    </Card>
   );
 };
 
