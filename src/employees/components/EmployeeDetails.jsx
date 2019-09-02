@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import Card from '../../layout/components/Card';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from 'employees/reducer';
-import { Image, Row, Col, Button } from 'react-bootstrap';
+import { Image, Row, Col, Button, Alert } from 'react-bootstrap';
+import { actions, selectedEmployeeStates } from 'employees/actions';
 
 const Centered = styled.div`
   text-align: center;
@@ -37,12 +38,46 @@ const PropertyGroup = styled.div`
   padding: 10px 20px;
 `;
 
-const NameProperty = styled.div``;
+const EditAndDeleteButtons = () => {
+  const dispatch = useDispatch();
+  const employee = useSelector(state => selectors.selectedEmployee(state));
 
-const ValueProperty = styled.div``;
+  return (
+    <>
+      <span
+        className='fa-stack fa-x'
+        style={{ cursor: 'pointer' }}
+        onClick={e => dispatch(actions.update(employee.id))}
+      >
+        <i
+          className='fa fa-circle fa-stack-2x'
+          style={{ color: '#f2f7fa' }}
+        ></i>
+        <i className='fa fa-pen fa-stack-1x' style={{ color: '#000000' }}></i>
+      </span>
+
+      <span
+        className='fa-stack fa-x'
+        style={{ cursor: 'pointer' }}
+        onClick={e => dispatch(actions.deleteEmployee(employee.id))}
+      >
+        <i
+          className='fa fa-circle fa-stack-2x'
+          style={{ color: '#f2f7fa' }}
+        ></i>
+        <i className='fa fa-times fa-stack-1x' style={{ color: '#f86770' }}></i>
+      </span>
+    </>
+  );
+};
 
 const EmployeeDetails = () => {
+  const dispatch = useDispatch();
+
   const employee = useSelector(state => selectors.selectedEmployee(state));
+  const selectedEmployeeState = useSelector(state =>
+    selectors.selectedEmployeeState(state)
+  );
 
   return (
     <Card style={{ display: 'block' }}>
@@ -70,26 +105,93 @@ const EmployeeDetails = () => {
         <Email>{employee.email}</Email>
       </Centered>
 
-      <Centered style={{ marginTop: 20 }}>
-        <span className='fa-stack fa-x' style={{ cursor: 'pointer' }}>
-          <i
-            className='fa fa-circle fa-stack-2x'
-            style={{ color: '#f2f7fa' }}
-          ></i>
-          <i className='fa fa-pen fa-stack-1x'></i>
-        </span>
+      {selectedEmployeeState === selectedEmployeeStates.DELETE_CONFIRM_STATE ? (
+        <Alert variant='danger'>
+          <Row
+            style={{
+              justifyContent: 'center' /* align horizontal */,
+              alignItems: 'center'
+            }}
+          >
+            <Col xs={4} sm={4} lg={4}>
+              Are you sure?
+            </Col>
+            <Col xs={4} sm={4} lg={4}>
+              <Centered>
+                <span className='fa-stack fa-x'>
+                  <i
+                    className='fa fa-circle fa-stack-2x'
+                    style={{ color: '#d7384c' }}
+                  ></i>
+                  <i
+                    className='fa fa-pen fa-stack-1x'
+                    style={{ color: '#ab0c20' }}
+                  ></i>
+                </span>
 
-        <span className='fa-stack fa-x' style={{ cursor: 'pointer' }}>
-          <i
-            className='fa fa-circle fa-stack-2x'
-            style={{ color: '#f2f7fa' }}
-          ></i>
-          <i
-            className='fa fa-times fa-stack-1x'
-            style={{ color: '#f86770' }}
-          ></i>
-        </span>
-      </Centered>
+                <span className='fa-stack fa-x'>
+                  <i
+                    className='fa fa-circle fa-stack-2x'
+                    style={{ color: '#d7384c' }}
+                  ></i>
+                  <i
+                    className='fa fa-times fa-stack-1x'
+                    style={{ color: '#d90c23' }}
+                  ></i>
+                </span>
+              </Centered>
+            </Col>
+            <Col xs={2} sm={2} lg={2}>
+              <Alert.Link
+                onClick={e =>
+                  dispatch(actions.deleteEmployeeConfirm(employee.id))
+                }
+              >
+                YES
+              </Alert.Link>
+            </Col>
+            <Col xs={2} sm={2} lg={2}>
+              <Alert.Link
+                onClick={e => dispatch(actions.selectEmployee(employee.id))}
+              >
+                NO
+              </Alert.Link>
+            </Col>
+          </Row>
+        </Alert>
+      ) : (
+        <Centered style={{ marginTop: 20 }}>
+          <span
+            className='fa-stack fa-x'
+            style={{ cursor: 'pointer' }}
+            onClick={e => dispatch(actions.update(employee.id))}
+          >
+            <i
+              className='fa fa-circle fa-stack-2x'
+              style={{ color: '#f2f7fa' }}
+            ></i>
+            <i
+              className='fa fa-pen fa-stack-1x'
+              style={{ color: '#000000' }}
+            ></i>
+          </span>
+
+          <span
+            className='fa-stack fa-x'
+            style={{ cursor: 'pointer' }}
+            onClick={e => dispatch(actions.deleteEmployee(employee.id))}
+          >
+            <i
+              className='fa fa-circle fa-stack-2x'
+              style={{ color: '#f2f7fa' }}
+            ></i>
+            <i
+              className='fa fa-times fa-stack-1x'
+              style={{ color: '#f86770' }}
+            ></i>
+          </span>
+        </Centered>
+      )}
 
       <PropertyGroup>
         <PropertyDescription>
@@ -126,6 +228,7 @@ const EmployeeDetails = () => {
         variant='secondary'
         block
         style={{ backgroundColor: '#9B9B9B' }}
+        onClick={e => dispatch(actions.share(employee.id))}
       >
         SHARE
       </Button>

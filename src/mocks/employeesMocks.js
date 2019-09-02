@@ -202,7 +202,7 @@ export const defaultMock = {
     role: 'Admin',
     team: 'Creative'
   },
-  selectedEmployeeStatus: 'DEFAULT_STATE',
+  selectedEmployeeState: 'DEFAULT_STATE',
   teams: [
     { id: 1, name: 'Finance & Admin' },
     { id: 2, name: 'Creative' },

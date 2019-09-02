@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../reducer';
 import EmployeeItem from './EmployeeItem';
 import styled from 'styled-components';
+import { sortDirections, actions } from 'employees/actions';
 
 const GroupedEmployeesTitle = styled.div`
   padding: 10px 30px;
@@ -12,9 +13,12 @@ const GroupedEmployeesTitle = styled.div`
 `;
 
 const EmployeeList = () => {
+  const dispatch = useDispatch();
   const employeesGroups = useSelector(state =>
     selectors.employeesGroups(state)
   );
+
+  const sortDirection = useSelector(state => selectors.sortDirection(state));
 
   return (
     <>
@@ -25,8 +29,19 @@ const EmployeeList = () => {
             {index === 0 ? (
               <div style={{ display: 'inline', float: 'right' }}>
                 Sort By:{' '}
-                <span style={{ cursor: 'pointer', color: '#000000' }}>
-                  newest
+                <span
+                  style={{ cursor: 'pointer', color: '#000000' }}
+                  onClick={e => {
+                    if (sortDirection === sortDirections.NEWEST) {
+                      dispatch(actions.sort(sortDirections.AlPHABETICALLY));
+                    } else {
+                      dispatch(actions.sort(sortDirections.NEWEST));
+                    }
+                  }}
+                >
+                  {sortDirection === sortDirections.NEWEST
+                    ? 'newest'
+                    : 'alphabetically'}
                 </span>
               </div>
             ) : (

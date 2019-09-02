@@ -2,31 +2,36 @@ import {
   key,
   actionTypes,
   formStates,
-  selectedEmployeeStates
+  selectedEmployeeStates,
+  sortDirections
 } from './actions';
 
 import produce from 'immer';
-import { sortDirections } from './constants';
 
 export const selectors = {
+  formState: state => state[key].formState,
   employees: state => state[key].employees,
   employeesGroups: state => state[key].employeesGroups,
   selectedEmployee: state => state[key].selectedEmployee,
-  selectedEmployeeStatus: state => state[key].selectedEmployeeStatus,
+  selectedEmployeeState: state => state[key].selectedEmployeeState,
   teams: state => state[key].teams,
   images: state => state[key].images,
   roles: state => state[key].roles,
-  sortDirection: state => state[key].sortDirection
+  sortDirection: state => state[key].sortDirection,
+  searchText: state => state[key].searchText
 };
 
 const initialState = {
+  formState: formStates.DEFAULT_STATE,
+  employeesGroups: [],
   employees: [],
   selectedEmployee: null,
-  selectedEmployeeStatus: selectedEmployeeStates.DEFAULT_STATE,
+  selectedEmployeeState: selectedEmployeeStates.DEFAULT_STATE,
   teams: [],
   images: [],
   roles: [],
-  sortDirection: sortDirections.NEWEST
+  sortDirection: sortDirections.NEWEST,
+  searchText: ''
 };
 
 export default function(state = initialState, action) {
@@ -41,23 +46,37 @@ export default function(state = initialState, action) {
         draft.teams = action.payload.teams;
         draft.images = action.payload.images;
         draft.roles = action.payload.roles;
+        break;
       case actionTypes.ERROR:
         draft.error = action.payload.error;
         draft.formState = formStates.ERROR_STATE;
         break;
-      case actionTypes.SELECT_EMPLOYEE:
-        draft.selectedEmployeeStatus = selectedEmployeeStates.DEFAULT_STATE;
-        draft.selectedEmployee = formStates.selectedEmployee;
+      case actionTypes.SELECTED_EMPLOYEE:
+        draft.selectedEmployeeState = selectedEmployeeStates.SELECTED_STATE;
+        draft.selectedEmployee = action.payload.selectedEmployee;
         break;
-      case actionTypes.UPDATE_EMPLOYEES:
-        draft.formState = formStates.LOADED_STATE;
+      case actionTypes.CREATE_EMPLOYEE:
+        draft.selectedEmployeeState = selectedEmployeeStates.CREATE_STATE;
+        draft.selectedEmployee = null;
+        break;
+      case actionTypes.UPDATED:
+        draft.selectedEmployeeState = selectedEmployeeStates.UPDATE_STATE;
+        draft.selectedEmployee = action.payload.selectedEmployee;
+        break;
+      case actionTypes.UPDATED_EMPLOYEES:
+        draft.employeesGroups = action.payload.employeesGroups;
+        break;
+      case actionTypes.REFRESH_EMPLOYEES:
         draft.employees = action.payload.employees;
         break;
       case actionTypes.SORT:
-        draft.sortDirection = formStates.sortDirection;
+        draft.sortDirection = action.payload.sortDirection;
+        break;
+      case actionTypes.SEARCH:
+        draft.searchText = action.payload.searchText;
         break;
       case actionTypes.DELETE:
-        draft.selectedEmployeeStatus =
+        draft.selectedEmployeeState =
           selectedEmployeeStates.DELETE_CONFIRM_STATE;
         break;
       default:

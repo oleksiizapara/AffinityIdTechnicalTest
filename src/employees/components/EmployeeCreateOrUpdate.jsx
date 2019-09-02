@@ -1,13 +1,16 @@
 import React from 'react';
-import { Form, Button, Col, InputGroup } from 'react-bootstrap';
+import { Form, Button, Col, InputGroup, Alert } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
 import { errorMessages } from 'employees/errorMessages';
 import FormLayout from '../../layout/components/FormLayout';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectedEmployeeStates, actions } from 'employees/actions';
+import { selectors } from 'employees/reducer';
 
 const schema = yup.object({
-  profileImage: yup
+  imageId: yup
     .string()
     .required()
     .label('Profile image'),
@@ -24,11 +27,11 @@ const schema = yup.object({
     .email()
     .required()
     .label('Email address'),
-  role: yup
+  roleId: yup
     .string()
     .required()
     .label('Role'),
-  team: yup
+  teamId: yup
     .string()
     .required()
     .label('Team'),
@@ -43,22 +46,52 @@ const schema = yup.object({
 });
 
 const EmployeeCreate = () => {
+  const dispatch = useDispatch();
+
+  const employee = useSelector(state => selectors.selectedEmployee(state));
+  const selectedEmployeeState = useSelector(state =>
+    selectors.selectedEmployeeState(state)
+  );
+  const selectedEmployee = useSelector(state =>
+    selectors.selectedEmployee(state)
+  );
+
+  const roles = useSelector(state => selectors.roles(state));
+  const teams = useSelector(state => selectors.teams(state));
+  const images = useSelector(state => selectors.images(state));
+
+  const isUpdateState =
+    selectedEmployeeState !== selectedEmployeeStates.CREATE_STATE;
+
   return (
     <>
       <FormLayout>
-        <i
-          className='fa fa-times-circle fa-2x'
-          style={{
-            position: 'absolute',
-            top: -10,
-            right: 10,
-            cursor: 'pointer'
-          }}
-        />
+        {isUpdateState ? (
+          <i
+            className='fa fa-times-circle fa-2x'
+            style={{
+              position: 'absolute',
+              top: -10,
+              right: 10,
+              cursor: 'pointer'
+            }}
+            onClick={e => dispatch(actions.selectEmployee(employee.id))}
+          />
+        ) : (
+          <></>
+        )}
+
         <Formik
+          enableReinitialize
           validationSchema={schema}
-          onSubmit={console.log}
-          initialValues={{}}
+          initialValues={selectedEmployee}
+          onSubmit={(values, onSubmitActions) => {
+            if (isUpdateState) {
+              dispatch(actions.updated(values, onSubmitActions));
+            } else {
+              dispatch(actions.created(values, onSubmitActions));
+            }
+          }}
         >
           {({
             handleSubmit,
@@ -74,88 +107,98 @@ const EmployeeCreate = () => {
                 <Form.Label>Profile image</Form.Label>
                 <Form.Control
                   as='select'
-                  name='profileImage'
+                  name='imageId'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.profileImage}
                   defaultValue=''
                 >
-                  <option></option>
-                  <option>1</option>
-                  <option>2</option>
+                  <option value=''>Select profile image</option>
+                  {images.map(image => (
+                    <option key={image.id} value={image.id}>
+                      {image.name}
+                    </option>
+                  ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
                   {errors.profileImage}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group controlId='employeeCreate.Name'>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type='text'
                   name='name'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.name}
                 />
                 <Form.Control.Feedback type='invalid'>
                   {errors.name}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group controlId='employeeCreate.Email'>
                 <Form.Label>Email address</Form.Label>
                 <Form.Control
                   type='text'
                   name='email'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.email}
                 />
                 <Form.Control.Feedback type='invalid'>
                   {errors.email}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group controlId='employeeCreate.Role'>
                 <Form.Label>Role</Form.Label>
                 <Form.Control
                   as='select'
-                  name='role'
+                  name='roleId'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.role}
                   defaultValue=''
                 >
-                  <option></option>
-                  <option>1</option>
-                  <option>2</option>
+                  <option value=''>Select role</option>
+                  {roles.map(role => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
                   {errors.role}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group controlId='employeeCreate.Team'>
                 <Form.Label>Team</Form.Label>
                 <Form.Control
                   as='select'
-                  name='team'
+                  name='teamId'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.team}
                   defaultValue=''
                 >
-                  <option></option>
-                  <option>1</option>
-                  <option>2</option>
+                  <option value=''>Select team</option>
+                  {teams.map(team => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
+                  ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
                   {errors.team}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group controlId='employeeCreate.Address'>
                 <Form.Label>Address</Form.Label>
                 <Form.Control
                   type='text'
                   name='address'
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   isInvalid={!!errors.address}
                 />
                 <Form.Control.Feedback type='invalid'>
@@ -163,8 +206,12 @@ const EmployeeCreate = () => {
                 </Form.Control.Feedback>
               </Form.Group>
 
+              {!!errors.general && (
+                <Alert variant='danger'>{errors.general}</Alert>
+              )}
+
               <Button type='submit' variant='success' block>
-                ADD EMPLOYEE
+                {isUpdateState ? 'UPDATE EMPLOYEE' : 'ADD EMPLOYEE'}
               </Button>
             </Form>
           )}

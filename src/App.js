@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import configureStore from './configureStore';
 import mockedConfigureStore from 'mocks/mockedConfigureStore';
@@ -17,7 +17,10 @@ export default function App() {
     <>
       <Router>
         <Provider store={store}>
-          <EmployeePage />
+          <Switch>
+            <Route path='/:id' component={EmployeePage} />
+            <Route path='/' component={EmployeePage} />
+          </Switch>
         </Provider>
       </Router>
     </>

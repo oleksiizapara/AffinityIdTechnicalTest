@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Image } from 'react-bootstrap';
 
 import Card from 'layout/components/Card';
+import { useDispatch } from 'react-redux';
+import { actions } from 'employees/actions';
 
 const FullName = styled.div`
   line-height: 18px;
@@ -31,10 +33,15 @@ const Body = styled.div`
 `;
 
 const EmployeeItem = ({ employee }) => {
-  const { firstName, familyName, role, team, iconSrc } = employee;
+  const dispatch = useDispatch();
+
+  const { id, firstName, familyName, role, team, iconSrc } = employee;
 
   return (
-    <Card>
+    <Card
+      style={{ cursor: 'pointer' }}
+      onClick={e => dispatch(actions.selectEmployee(id))}
+    >
       <Image src={iconSrc} roundedCircle style={{ width: 60, height: 60 }} />
       <Body>
         <FullName>

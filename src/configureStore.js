@@ -6,7 +6,9 @@ import rootReducer from './rootReducer';
 import logic from './rootLogic';
 
 const deps = {
-  httpClient: axios
+  httpClient: axios,
+  baseApiAddress:
+    'https://my-json-server.typicode.com/oleksiizapara/AffinityIdTechnicalTestApi'
 };
 
 const logicMiddleware = createLogicMiddleware(logic, deps);
