@@ -8,9 +8,8 @@ const SORT = `[${key}] SORT`;
 const SELECT_EMPLOYEE = `[${key}] SELECT_EMPLOYEE`;
 const SELECTED_EMPLOYEE = `[${key}] SELECTED_EMPLOYEE`;
 const CREATE_EMPLOYEE = `[${key}] CREATE_EMPLOYEE`;
-const CREATED_EMPLOYEE = `[${key}] CREATED_EMPLOYEE`;
+const SUBMIT_EMPLOYEE = `[${key}] SUBMIT_EMPLOYEE`;
 const UPDATE = `[${key}] UPDATE`;
-const UPDATED = `[${key}] UPDATED`;
 const UPDATE_EMPLOYEES = `[${key}] UPDATE_EMPLOYEES`;
 const UPDATED_EMPLOYEES = `[${key}] UPDATED_EMPLOYEES`;
 const REFRESH_EMPLOYEES = `[${key}] REFRESH_EMPLOYEES`;
@@ -28,10 +27,9 @@ export const actionTypes = {
   SELECT_EMPLOYEE,
   SELECTED_EMPLOYEE,
   CREATE_EMPLOYEE,
-  CREATED_EMPLOYEE,
+  SUBMIT_EMPLOYEE,
   ERROR,
   UPDATE,
-  UPDATED,
   UPDATE_EMPLOYEES,
   UPDATED_EMPLOYEES,
   REFRESH_EMPLOYEES,
@@ -120,10 +118,14 @@ const selectEmployee = employeeId => ({
   }
 });
 
-const selectedEmployee = selectedEmployee => ({
+const selectedEmployee = (
+  selectedEmployee,
+  selectedEmployeeState = selectedEmployeeStates.SELECTED_STATE
+) => ({
   type: actionTypes.SELECTED_EMPLOYEE,
   payload: {
-    selectedEmployee
+    selectedEmployee,
+    selectedEmployeeState
   }
 });
 
@@ -132,8 +134,8 @@ const create = () => ({
   payload: {}
 });
 
-const created = (selectedEmployee, onSubmitActions) => ({
-  type: actionTypes.CREATED_EMPLOYEE,
+const submitEmployee = (selectedEmployee, onSubmitActions) => ({
+  type: actionTypes.SUBMIT_EMPLOYEE,
   payload: {
     selectedEmployee,
     onSubmitActions
@@ -151,14 +153,6 @@ const update = employeeId => ({
   type: actionTypes.UPDATE,
   payload: {
     employeeId
-  }
-});
-
-const updated = (selectedEmployee, onSubmitActions) => ({
-  type: actionTypes.UPDATED,
-  payload: {
-    selectedEmployee,
-    onSubmitActions
   }
 });
 
@@ -218,10 +212,9 @@ export const actions = {
   selectedEmployee,
   refreshEmployees,
   create,
-  created,
+  submitEmployee,
   error,
   update,
-  updated,
   updateEmployees,
   updatedEmployees,
   deleteEmployee,

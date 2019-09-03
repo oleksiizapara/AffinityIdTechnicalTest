@@ -52,15 +52,7 @@ export default function(state = initialState, action) {
         draft.formState = formStates.ERROR_STATE;
         break;
       case actionTypes.SELECTED_EMPLOYEE:
-        draft.selectedEmployeeState = selectedEmployeeStates.SELECTED_STATE;
-        draft.selectedEmployee = action.payload.selectedEmployee;
-        break;
-      case actionTypes.CREATE_EMPLOYEE:
-        draft.selectedEmployeeState = selectedEmployeeStates.CREATE_STATE;
-        draft.selectedEmployee = null;
-        break;
-      case actionTypes.UPDATED:
-        draft.selectedEmployeeState = selectedEmployeeStates.UPDATE_STATE;
+        draft.selectedEmployeeState = action.payload.selectedEmployeeState;
         draft.selectedEmployee = action.payload.selectedEmployee;
         break;
       case actionTypes.UPDATED_EMPLOYEES:

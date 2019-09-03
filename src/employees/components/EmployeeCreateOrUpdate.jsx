@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button, Col, InputGroup, Alert } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
@@ -82,15 +82,11 @@ const EmployeeCreate = () => {
         )}
 
         <Formik
-          enableReinitialize
+          enableReinitialize={true}
           validationSchema={schema}
           initialValues={selectedEmployee}
           onSubmit={(values, onSubmitActions) => {
-            if (isUpdateState) {
-              dispatch(actions.updated(values, onSubmitActions));
-            } else {
-              dispatch(actions.created(values, onSubmitActions));
-            }
+            dispatch(actions.submitEmployee(values, onSubmitActions));
           }}
         >
           {({
@@ -110,8 +106,8 @@ const EmployeeCreate = () => {
                   name='imageId'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.profileImage}
-                  defaultValue=''
+                  isInvalid={touched.imageId && !!errors.imageId}
+                  value={values.imageId}
                 >
                   <option value=''>Select profile image</option>
                   {images.map(image => (
@@ -121,7 +117,7 @@ const EmployeeCreate = () => {
                   ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
-                  {errors.profileImage}
+                  {errors.imageId}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId='employeeCreate.Name'>
@@ -129,9 +125,10 @@ const EmployeeCreate = () => {
                 <Form.Control
                   type='text'
                   name='name'
+                  value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.name}
+                  isInvalid={touched.name && !!errors.name}
                 />
                 <Form.Control.Feedback type='invalid'>
                   {errors.name}
@@ -144,7 +141,8 @@ const EmployeeCreate = () => {
                   name='email'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.email}
+                  isInvalid={touched.email && !!errors.email}
+                  value={values.email}
                 />
                 <Form.Control.Feedback type='invalid'>
                   {errors.email}
@@ -157,8 +155,8 @@ const EmployeeCreate = () => {
                   name='roleId'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.role}
-                  defaultValue=''
+                  isInvalid={touched.roleId && !!errors.roleId}
+                  value={values.roleId}
                 >
                   <option value=''>Select role</option>
                   {roles.map(role => (
@@ -168,7 +166,7 @@ const EmployeeCreate = () => {
                   ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
-                  {errors.role}
+                  {errors.roleId}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId='employeeCreate.Team'>
@@ -178,8 +176,8 @@ const EmployeeCreate = () => {
                   name='teamId'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.team}
-                  defaultValue=''
+                  isInvalid={touched.teamId && !!errors.teamId}
+                  value={values.teamId}
                 >
                   <option value=''>Select team</option>
                   {teams.map(team => (
@@ -189,7 +187,7 @@ const EmployeeCreate = () => {
                   ))}
                 </Form.Control>
                 <Form.Control.Feedback type='invalid'>
-                  {errors.team}
+                  {errors.teamId}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group controlId='employeeCreate.Address'>
@@ -199,7 +197,8 @@ const EmployeeCreate = () => {
                   name='address'
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  isInvalid={!!errors.address}
+                  isInvalid={touched.address && !!errors.address}
+                  value={values.address}
                 />
                 <Form.Control.Feedback type='invalid'>
                   {errors.address}

@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import useReactRouter from 'use-react-router';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../reducer';
 import EmployeeItem from './EmployeeItem';

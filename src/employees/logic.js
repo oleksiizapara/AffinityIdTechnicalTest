@@ -2,11 +2,15 @@ import { createLogic } from 'redux-logic';
 import produce from 'immer';
 import Enumerable from 'linq';
 
-import { actionTypes, actions, sortDirections } from './actions';
+import {
+  actionTypes,
+  actions,
+  sortDirections,
+  selectedEmployeeStates
+} from './actions';
 
 import { selectors } from './reducer';
 import { errorMessages } from './errorMessages';
-import { async } from 'q';
 
 const request = async (httpClient, baseApiAddress, url) => {
   return await httpClient.get(baseApiAddress + url).then(resp => {
@@ -116,8 +120,52 @@ const updateEmployee = createLogic({
     const employee = employees.find(x => x.id === employeeId);
 
     if (employee) {
-      dispatch(actions.updated(employee));
+      const updateEmployee = produce(employee, draft => {
+        draft.name = `${employee.firstName} ${employee.familyName}`;
+        draft.address = `${employee.address}, ${employee.city}`;
+        delete draft.firstName;
+        delete draft.familyName;
+        delete draft.iconSrc;
+        delete draft.role;
+        delete draft.team;
+      });
+
+      dispatch(
+        actions.selectedEmployee(
+          updateEmployee,
+          selectedEmployeeStates.UPDATE_STATE
+        )
+      );
     }
+
+    done();
+  }
+});
+
+const createEmployee = createLogic({
+  type: actionTypes.CREATE_EMPLOYEE,
+
+  processOptions: {
+    dispatchReturn: true
+  },
+
+  latest: true,
+
+  async process({ getState, action }, dispatch, done) {
+    dispatch(
+      actions.selectedEmployee(
+        {
+          id: '',
+          name: '',
+          email: '',
+          address: '',
+          roleId: '',
+          teamId: '',
+          imageId: ''
+        },
+        selectedEmployeeStates.CREATE_STATE
+      )
+    );
 
     done();
   }
@@ -202,8 +250,8 @@ const updateEmployees = createLogic({
   }
 });
 
-const createdEmployee = createLogic({
-  type: actionTypes.CREATED_EMPLOYEE,
+const submitEmployee = createLogic({
+  type: actionTypes.SUBMIT_EMPLOYEE,
 
   processOptions: {
     dispatchReturn: true
@@ -233,33 +281,66 @@ const createdEmployee = createLogic({
     selectedEmployee.address = addressMatch[1];
     selectedEmployee.city = addressMatch[2];
 
-    selectedEmployee.createdAt = new Date().getTime();
+    if (selectedEmployeeState == selectedEmployeeStates.CREATE_STATE) {
+      selectedEmployee.createdAt = new Date().getTime();
+    }
+
     selectedEmployee.updatedAt = new Date().getTime();
 
     console.log({ selectedEmployee });
 
+    var selectedEmployeeState = selectors.selectedEmployeeState(getState());
+
     try {
-      var responseEmployee = await httpClient
-        .post(baseApiAddress + '/employees', selectedEmployee)
-        .then(resp => {
-          return resp.data;
-        });
+      var responseEmployee;
+      switch (selectedEmployeeState) {
+        case selectedEmployeeStates.CREATE_STATE:
+          responseEmployee = await httpClient
+            .post(`${baseApiAddress}/employees`, selectedEmployee)
+            .then(resp => {
+              return resp.data;
+            });
+          break;
+        case selectedEmployeeStates.UPDATE_STATE:
+          responseEmployee = await httpClient
+            .put(
+              `${baseApiAddress}/employees/${selectedEmployee.id}`,
+              selectedEmployee
+            )
+            .then(resp => {
+              return resp.data;
+            });
+          break;
+        default:
+          break;
+      }
 
       var roles = selectors.roles(getState());
       var teams = selectors.teams(getState());
       var images = selectors.images(getState());
 
-      console.log({ responseEmployee });
-
       updateEmployeeProperties(responseEmployee, teams, roles, images);
 
-      console.log({ responseEmployee });
+      const employees = selectors.employees(getState());
 
-      var employees = selectors.employees(getState());
-      employees = [...employees, responseEmployee];
+      var updatedEmployees;
 
-      dispatch(actions.refreshEmployees(employees));
-      dispatch(actions.updateEmployees(employees));
+      switch (selectedEmployeeState) {
+        case selectedEmployeeStates.CREATE_STATE:
+          updatedEmployees = [...employees, responseEmployee];
+          break;
+        case selectedEmployeeStates.UPDATE_STATE:
+          updatedEmployees = employees.filter(
+            x => x.id !== responseEmployee.id
+          );
+          updatedEmployees = [...updatedEmployees, responseEmployee];
+          break;
+        default:
+          break;
+      }
+
+      dispatch(actions.refreshEmployees(updatedEmployees));
+      dispatch(actions.updateEmployees(updatedEmployees));
       dispatch(actions.selectEmployee(responseEmployee.id));
     } catch (error) {
       onSubmitActions.setFieldError('general', error.message);
@@ -271,12 +352,52 @@ const createdEmployee = createLogic({
   }
 });
 
+const deleteConfirmEmployee = createLogic({
+  type: actionTypes.DELETE_CONFIRM,
+
+  processOptions: {
+    dispatchReturn: true
+  },
+
+  latest: true,
+
+  async process(
+    { getState, action, httpClient, baseApiAddress },
+    dispatch,
+    done
+  ) {
+    var { employeeId } = action.payload;
+
+    try {
+      var response = await httpClient
+        .delete(`${baseApiAddress}/employees/${employeeId}`)
+        .then(resp => {
+          return resp.data;
+        });
+
+      const employees = selectors.employees(getState());
+
+      const updatedEmployees = employees.filter(x => x.id !== employeeId);
+
+      dispatch(actions.refreshEmployees(updatedEmployees));
+      dispatch(actions.updateEmployees(updatedEmployees));
+      dispatch(actions.selectEmployee());
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    done();
+  }
+});
+
 export default [
   load,
   selectEmployee,
+  createEmployee,
   updateEmployee,
   shareEmployee,
   searchAndSort,
   updateEmployees,
-  createdEmployee
+  submitEmployee,
+  deleteConfirmEmployee
 ];
