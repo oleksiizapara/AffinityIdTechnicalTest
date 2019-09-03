@@ -15,7 +15,7 @@ import EmployeeDetails from './EmployeeDetails';
 
 const Logo = styled.div`
   background-image: url(${logo});
-  height: 38px;
+  height: 46px;
   width: 100%;
   background-repeat: no-repeat;
   background-size: contain;
@@ -38,7 +38,11 @@ const EmployeePage = () => {
   console.debug({ formState });
   switch (formState) {
     case formStates.LOADING_STATE:
-      return <Spinner animation='border' />;
+      return (
+        <div className='spinner-wrapper'>
+          <Spinner animation='border' />
+        </div>
+      );
     case formStates.LOADED_STATE:
       return (
         <Layout>
@@ -50,12 +54,18 @@ const EmployeePage = () => {
             }}
           >
             <Container>
+              <div className='upperMargin' />
               <Row>
                 <Col
                   xs={12}
                   sm={6}
                   lg={6}
-                  style={{ marginTop: 10, marginBottom: 10 }}
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 10,
+                    paddingLeft: 30,
+                    paddingRight: 30
+                  }}
                 >
                   <Logo />
                 </Col>

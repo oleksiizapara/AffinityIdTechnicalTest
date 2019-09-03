@@ -1,5 +1,8 @@
 import { formStates } from 'employees/actions';
 
+export const loadingMock = {
+  formState: 'LOADING_STATE'
+};
 export const defaultMock = {
   employeesGroups: [
     {

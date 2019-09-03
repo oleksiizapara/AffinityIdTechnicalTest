@@ -4,7 +4,7 @@ import { key as employeesKey } from 'employees';
 
 import * as employeesMocks from 'mocks/employeesMocks';
 
-const initialEmployeesState = employeesMocks.defaultMock;
+const initialEmployeesState = employeesMocks.loadingMock;
 
 const mockedReducer = initialState => (state = initialState) => {
   return state;
